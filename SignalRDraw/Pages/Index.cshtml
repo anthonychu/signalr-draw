@@ -1,0 +1,62 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<style>
+    #draw-canvas {
+        background-color: #ddd;
+    }
+</style>
+
+<div>
+    <canvas id="draw-canvas" height="500" width="800"></canvas>
+</div>
+
+<script src="https://unpkg.com/@@aspnet/signalr@@1.0.0-preview1-update1/dist/browser/signalr.js"></script>
+<script>
+var connection = new signalR.HubConnection('/draw')
+connection.on('newStroke', drawStroke)
+connection.start().catch(err => console.error)
+
+var canvas = document.getElementById('draw-canvas')
+var ctx = canvas.getContext('2d')
+
+var penDown = false
+var previous = {x: 0, y: 0}
+canvas.addEventListener('mousedown', ev => {
+    penDown = true
+})
+
+canvas.addEventListener('mouseup', ev => {
+    penDown = false
+})
+
+canvas.addEventListener('mousemove', ev => {
+    if (penDown) {
+        var start = {
+            x: previous.x - canvas.offsetLeft,
+            y: previous.y - canvas.offsetTop
+        }
+        var end = {
+            x: ev.pageX - canvas.offsetLeft,
+            y: ev.pageY - canvas.offsetTop
+        }
+        drawStroke(start, end)
+        connection.invoke('NewStroke', start, end)
+    }
+    previous = {
+        x: ev.pageX,
+        y: ev.pageY
+    }
+})
+
+function drawStroke(start, end) {
+    ctx.beginPath()
+    ctx.moveTo(start.x, start.y)
+    ctx.lineTo(end.x, end.y)
+    ctx.stroke()
+}
+
+</script>
