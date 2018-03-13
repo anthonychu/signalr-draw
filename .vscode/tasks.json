@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/SignalRDraw.csproj"
+                "${workspaceFolder}/SignalRDraw/SignalRDraw.csproj"
             ],
             "problemMatcher": "$msCompile"
         }
