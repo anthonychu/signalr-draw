@@ -11,18 +11,35 @@
 </style>
 
 <div>
+    <input type="button" id="clear" value="Clear" />
+</div>
+<div>
     <canvas id="draw-canvas" height="500" width="800"></canvas>
 </div>
 
 <script src="https://unpkg.com/@@aspnet/signalr@@1.0.0-preview1-update1/dist/browser/signalr.js"></script>
 <script>
+
+
 var connection = new signalR.HubConnection('/draw')
 connection.on('newStroke', drawStroke)
+connection.on('clearCanvas', clearCanvas)
 connection.start().catch(err => console.error)
 
 var canvas = document.getElementById('draw-canvas')
 var ctx = canvas.getContext('2d')
 ctx.lineWidth = 4
+
+var clearButton = document.getElementById('clear')
+clearButton.addEventListener('click', ev => {
+    ev.preventDefault()
+    clearCanvas()
+    connection.invoke('ClearCanvas')
+})
+
+function clearCanvas() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+}
 
 var penDown = false
 var previous = {x: 0, y: 0}
