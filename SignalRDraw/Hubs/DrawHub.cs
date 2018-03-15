@@ -5,9 +5,9 @@ namespace SignalRDraw
 {
     public class DrawHub : Hub
     {
-        public async Task NewStroke(Point start, Point end)
+        public async Task NewStroke(Point start, Point end, string color)
         {
-            await Clients.Others.SendAsync("newStroke", start, end);
+            await Clients.Others.SendAsync("newStroke", start, end, color);
         }
 
         public async Task ClearCanvas()

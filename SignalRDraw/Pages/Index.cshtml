@@ -11,6 +11,7 @@
 </style>
 
 <div>
+    <input type="color" id="color" value="black" />
     <input type="button" id="clear" value="Clear" />
 </div>
 <div>
@@ -33,9 +34,13 @@ ctx.lineWidth = 4
 var clearButton = document.getElementById('clear')
 clearButton.addEventListener('click', ev => {
     ev.preventDefault()
-    clearCanvas()
-    connection.invoke('ClearCanvas')
+    if (confirm("Are you sure you want to clear everyone's canvases???")) {
+        clearCanvas()
+        connection.invoke('ClearCanvas')
+    }
 })
+
+var colorButton = document.getElementById('color')
 
 function clearCanvas() {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
@@ -61,8 +66,8 @@ canvas.addEventListener('mousemove', ev => {
             x: ev.pageX - canvas.offsetLeft,
             y: ev.pageY - canvas.offsetTop
         }
-        drawStroke(start, end)
-        connection.invoke('NewStroke', start, end)
+        drawStroke(start, end, colorButton.value)
+        connection.invoke('NewStroke', start, end, colorButton.value)
     }
     previous = {
         x: ev.pageX,
@@ -70,7 +75,9 @@ canvas.addEventListener('mousemove', ev => {
     }
 })
 
-function drawStroke(start, end) {
+function drawStroke(start, end, color) {
+    color = color || "#000"
+    ctx.strokeStyle = color
     ctx.beginPath()
     ctx.moveTo(start.x, start.y)
     ctx.lineTo(end.x, end.y)
