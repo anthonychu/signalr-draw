@@ -22,7 +22,9 @@ namespace SignalRDraw
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            services.AddSignalR();
+            services
+                .AddSignalR()
+                .AddAzureSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -37,7 +39,7 @@ namespace SignalRDraw
                 app.UseExceptionHandler("/Error");
             }
             
-            app.UseSignalR(builder => 
+            app.UseAzureSignalR(builder => 
             {
                 builder.MapHub<DrawHub>("/draw");
             });
