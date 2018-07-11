@@ -72,7 +72,6 @@ canvas.addEventListener('mousemove', ev => {
             y: ev.pageY - canvas.offsetTop
         }
         drawStroke(start, end, colorButton.value)
-        //connection.send('NewStroke', start, end, colorButton.value)
         unsentStrokes.push({
             start: start,
             end: end,

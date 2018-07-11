@@ -8,24 +8,16 @@ namespace SignalRDraw
 {
     public class DrawHub : Hub
     {
-        private static ConcurrentBag<Stroke> strokes = new ConcurrentBag<Stroke>();
-        public async Task NewStroke(Point start, Point end, string color)
-        {
-            var task = Clients.Others.SendAsync("newStroke", start, end, color);
-            strokes.Add(new Stroke
-            {
-                Start = start,
-                End = end,
-                Color = color
-            });
-            await task;
-        }
+        private static List<Stroke> strokes = new List<Stroke>();
 
         public async Task NewStrokes(IEnumerable<Stroke> newStrokes)
         {
-            foreach (var s in newStrokes)
+            lock(strokes)
             {
-                strokes.Add(s);
+                foreach (var s in newStrokes)
+                {
+                    strokes.Add(s);
+                }
             }
             var tasks = newStrokes.Select(
                 s => Clients.Others.SendAsync("newStroke", s.Start, s.End, s.Color));
@@ -35,7 +27,10 @@ namespace SignalRDraw
         public async Task ClearCanvas()
         {
             var task = Clients.Others.SendAsync("clearCanvas");
-            strokes.Clear();
+            lock(strokes)
+            {
+                strokes.Clear();
+            }
             await task;
         }
 
