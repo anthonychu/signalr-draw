@@ -9,7 +9,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/SignalRDraw/bin/Debug/netcoreapp2.0/SignalRDraw.dll",
+            "program": "${workspaceFolder}/SignalRDraw/bin/Debug/netcoreapp2.1/SignalRDraw.dll",
             "args": [],
             "cwd": "${workspaceFolder}/SignalRDraw",
             "stopAtEntry": false,

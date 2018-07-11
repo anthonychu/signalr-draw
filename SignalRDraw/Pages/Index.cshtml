@@ -18,14 +18,19 @@
     <canvas id="draw-canvas" height="500" width="800"></canvas>
 </div>
 
-<script src="https://unpkg.com/@@aspnet/signalr@@1.0.0-preview1-update1/dist/browser/signalr.js"></script>
+<script src="https://unpkg.com/@@aspnet/signalr@@1.0.0/dist/browser/signalr.js"></script>
 <script>
 
+var unsentStrokes = [];
 
-var connection = new signalR.HubConnection('/draw')
+var connection = new signalR.HubConnectionBuilder()
+    .withUrl('/draw')
+    .build();
 connection.on('newStroke', drawStroke)
 connection.on('clearCanvas', clearCanvas)
-connection.start().catch(err => console.error)
+connection.start()
+    .then(() => console.log('connected!'))
+    .catch(err => console.error)
 
 var canvas = document.getElementById('draw-canvas')
 var ctx = canvas.getContext('2d')
@@ -36,7 +41,7 @@ clearButton.addEventListener('click', ev => {
     ev.preventDefault()
     if (confirm("Are you sure you want to clear everyone's canvases???")) {
         clearCanvas()
-        connection.invoke('ClearCanvas')
+        connection.send('ClearCanvas')
     }
 })
 
@@ -67,7 +72,12 @@ canvas.addEventListener('mousemove', ev => {
             y: ev.pageY - canvas.offsetTop
         }
         drawStroke(start, end, colorButton.value)
-        connection.invoke('NewStroke', start, end, colorButton.value)
+        //connection.send('NewStroke', start, end, colorButton.value)
+        unsentStrokes.push({
+            start: start,
+            end: end,
+            color: colorButton.value
+        })
     }
     previous = {
         x: ev.pageX,
@@ -84,4 +94,10 @@ function drawStroke(start, end, color) {
     ctx.stroke()
 }
 
+setInterval(function() {
+    if (unsentStrokes.length) {
+        connection.send('NewStrokes', unsentStrokes);
+        unsentStrokes = [];
+    }
+}, 250);
 </script>

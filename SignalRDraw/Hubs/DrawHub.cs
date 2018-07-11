@@ -21,6 +21,17 @@ namespace SignalRDraw
             await task;
         }
 
+        public async Task NewStrokes(IEnumerable<Stroke> newStrokes)
+        {
+            foreach (var s in newStrokes)
+            {
+                strokes.Add(s);
+            }
+            var tasks = newStrokes.Select(
+                s => Clients.Others.SendAsync("newStroke", s.Start, s.End, s.Color));
+            await Task.WhenAll(tasks);
+        }
+
         public async Task ClearCanvas()
         {
             var task = Clients.Others.SendAsync("clearCanvas");

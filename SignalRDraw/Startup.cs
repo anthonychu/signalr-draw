@@ -36,7 +36,7 @@ namespace SignalRDraw
             {
                 app.UseExceptionHandler("/Error");
             }
-
+            
             app.UseSignalR(builder => 
             {
                 builder.MapHub<DrawHub>("/draw");
