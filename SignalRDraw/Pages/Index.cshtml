@@ -73,6 +73,7 @@ function mouseUp() {
 }
 
 function mouseMove(ev) {
+    ev.preventDefault();
     if (penDown) {
         var start = {
             x: previous.x - canvas.offsetLeft,
