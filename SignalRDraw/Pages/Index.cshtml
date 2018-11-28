@@ -53,15 +53,26 @@ function clearCanvas() {
 
 var penDown = false
 var previous = {x: 0, y: 0}
-canvas.addEventListener('mousedown', ev => {
+
+canvas.addEventListener('mousedown', mouseDown)
+canvas.addEventListener('touchstart', mouseDown)
+
+canvas.addEventListener('mouseup', mouseUp)
+canvas.addEventListener('touchend', mouseUp)
+canvas.addEventListener('touchcancel', mouseUp)
+
+canvas.addEventListener('mousemove', mouseMove)
+canvas.addEventListener('touchmove', mouseMove)
+
+function mouseDown() {
     penDown = true
-})
+}
 
-canvas.addEventListener('mouseup', ev => {
+function mouseUp() {
     penDown = false
-})
+}
 
-canvas.addEventListener('mousemove', ev => {
+function mouseMove(ev) {
     if (penDown) {
         var start = {
             x: previous.x - canvas.offsetLeft,
@@ -82,7 +93,7 @@ canvas.addEventListener('mousemove', ev => {
         x: ev.pageX,
         y: ev.pageY
     }
-})
+}
 
 function drawStroke(start, end, color) {
     color = color || "#000"

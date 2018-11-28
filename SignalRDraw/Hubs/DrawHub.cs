@@ -14,10 +14,7 @@ namespace SignalRDraw
         {
             lock(strokes)
             {
-                foreach (var s in newStrokes)
-                {
-                    strokes.Add(s);
-                }
+                strokes.AddRange(newStrokes);
             }
             var tasks = newStrokes.Select(
                 s => Clients.Others.SendAsync("newStroke", s.Start, s.End, s.Color));
