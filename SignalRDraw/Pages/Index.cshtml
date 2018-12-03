@@ -1,4 +1,4 @@
-﻿@page
+﻿@page "{room?}"
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
@@ -18,9 +18,9 @@
     <canvas id="draw-canvas" height="500" width="800"></canvas>
 </div>
 
-<script src="https://unpkg.com/@@aspnet/signalr@@1.0.0/dist/browser/signalr.js"></script>
+<script src="https://unpkg.com/@@aspnet/signalr@@1.0.4/dist/browser/signalr.js"></script>
 <script>
-
+var roomName = /\/(\w+)$/.exec(window.location.href)[1]
 var unsentStrokes = [];
 
 var connection = new signalR.HubConnectionBuilder()
@@ -29,7 +29,10 @@ var connection = new signalR.HubConnectionBuilder()
 connection.on('newStroke', drawStroke)
 connection.on('clearCanvas', clearCanvas)
 connection.start()
-    .then(() => console.log('connected!'))
+    .then(() => {
+        console.log('Connected. Joining room ' + roomName)
+        connection.send('JoinRoom', roomName)
+    })
     .catch(err => console.error)
 
 var canvas = document.getElementById('draw-canvas')
@@ -41,7 +44,7 @@ clearButton.addEventListener('click', ev => {
     ev.preventDefault()
     if (confirm("Are you sure you want to clear everyone's canvases???")) {
         clearCanvas()
-        connection.send('ClearCanvas')
+        connection.send('ClearCanvas', roomName)
     }
 })
 
@@ -74,7 +77,7 @@ function mouseUp() {
 
 function mouseMove(ev) {
     ev.preventDefault();
-    const millisecondsSinceLastStroke = (new Date()).getTime() - previous.ts
+    var millisecondsSinceLastStroke = (new Date()).getTime() - previous.ts
     if (penDown && millisecondsSinceLastStroke < 100) {
         var start = {
             x: previous.x - canvas.offsetLeft,
@@ -109,7 +112,7 @@ function drawStroke(start, end, color) {
 
 setInterval(function() {
     if (unsentStrokes.length) {
-        connection.send('NewStrokes', unsentStrokes);
+        connection.send('NewStrokes', roomName, unsentStrokes);
         unsentStrokes = [];
     }
 }, 250);

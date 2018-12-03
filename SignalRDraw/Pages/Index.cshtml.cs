@@ -9,9 +9,15 @@ namespace SignalRDraw.Pages
 {
     public class IndexModel : PageModel
     {
-        public void OnGet()
+        [HttpGet]
+        public IActionResult OnGet(string room)
         {
+            if (string.IsNullOrEmpty(room))
+            {
+                return RedirectToPage("index", new { room = "1" });
+            }
 
+            return Page();
         }
     }
 }
