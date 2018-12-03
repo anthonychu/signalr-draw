@@ -75,7 +75,7 @@ function mouseUp() {
 function mouseMove(ev) {
     ev.preventDefault();
     const millisecondsSinceLastStroke = (new Date()).getTime() - previous.ts
-    if (penDown && millisecondsSinceLastStroke < 500) {
+    if (penDown && millisecondsSinceLastStroke < 100) {
         var start = {
             x: previous.x - canvas.offsetLeft,
             y: previous.y - canvas.offsetTop
