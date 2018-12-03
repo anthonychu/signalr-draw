@@ -36,6 +36,11 @@ namespace SignalRDraw
             await task;
         }
 
+        internal static void ClearAll()
+        {
+            rooms.Clear();
+        }
+
         public async Task JoinRoom(string roomName)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, roomName);
