@@ -52,7 +52,7 @@ function clearCanvas() {
 }
 
 var penDown = false
-var previous = {x: 0, y: 0}
+var previous = {x: 0, y: 0, ts: 0}
 
 canvas.addEventListener('mousedown', mouseDown)
 canvas.addEventListener('touchstart', mouseDown)
@@ -74,7 +74,8 @@ function mouseUp() {
 
 function mouseMove(ev) {
     ev.preventDefault();
-    if (penDown) {
+    const millisecondsSinceLastStroke = (new Date()).getTime() - previous.ts
+    if (penDown && millisecondsSinceLastStroke < 500) {
         var start = {
             x: previous.x - canvas.offsetLeft,
             y: previous.y - canvas.offsetTop
@@ -92,7 +93,8 @@ function mouseMove(ev) {
     }
     previous = {
         x: ev.pageX,
-        y: ev.pageY
+        y: ev.pageY,
+        ts: (new Date()).getTime()
     }
 }
 
